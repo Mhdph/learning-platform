@@ -1,10 +1,9 @@
-// src/hooks.server.js
 import { redirect } from '@sveltejs/kit';
 import PocketBase from 'pocketbase';
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
-	const { locals, request, url } = event;
+	const { url, locals, request } = event;
 	locals.pb = new PocketBase('http://127.0.0.1:8090');
 
 	// load the store data from the request cookie string
@@ -23,8 +22,10 @@ export async function handle({ event, resolve }) {
 	if (
 		url.pathname.startsWith('/') &&
 		!locals.user &&
-		!['login', 'register'].includes('url.pathname')
+		!['/login', '/register'].includes(url.pathname)
 	) {
+		console.log(url.pathname);
+
 		redirect(303, '/login');
 	}
 	const response = await resolve(event);
